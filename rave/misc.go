@@ -1,4 +1,4 @@
-// utils and helper functions
+//  helper functions
 
 package rave
 
