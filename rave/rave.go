@@ -6,6 +6,7 @@ import (
 	"crypto/md5"
 	"encoding/base64"
 	"encoding/hex"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -21,6 +22,39 @@ type Rave struct {
 	Live      bool
 	PublicKey string
 	SecretKey string
+}
+
+// BaseUrlGetter implements behaviour to get the base url (live or sandbox)
+type BaseUrlGetter interface {
+	GetBaseUrl() string
+}
+
+// EndpointGetter implements behaviour to get the endpoint needed for a particular action
+type EndpointGetter interface {
+	GetEndpoint(endpointName string) map[string]string
+}
+
+//PublickeyGetter implements behaviour to get the developers public key
+type PublickeyGetter interface {
+	GetPublicKey() string
+}
+
+//SecretkeyGetter implements behaviour to get the developers secret key
+type SecretkeyGetter interface {
+	GetSecretKey() string
+}
+
+// Encryptor implements behaviour to encrypt payment payload with user secret key
+type Encryptor interface {
+	Encrypt() string
+}
+
+type Helpers interface {
+	BaseUrlGetter
+	EndpointGetter
+	PublickeyGetter
+	SecretkeyGetter
+	Encryptor
 }
 
 var Endpoints = map[string]map[string]string{
@@ -83,8 +117,8 @@ func (r Rave) GetBaseURL() string {
 	return sandboxUrl
 }
 
-func (Rave) GetEndpoint(endpointName string) map[string]string {
-	return Endpoints[endpointName]
+func (Rave) GetEndpoint(raveType string, action string) string {
+	return Endpoints[raveType][action]
 }
 
 // gets the public key from the environment variable if set or from the Rave object
@@ -102,10 +136,11 @@ func (r Rave) GetPublicKey() string {
 
 // gets the secret key
 func (r Rave) GetSecretKey() string {
+	fmt.Println("SEC", r.SecretKey)
 	secKey, ok := os.LookupEnv("RAVE_SECKEY")
 	if !ok {
 		if r.SecretKey == "" {
-			log.Fatal("You need to set the your public key as an environment variable \"RAVE_SECKEY\" or as a field in thr Rave struct")
+			log.Fatal("You need to set the your secret key as an environment variable \"RAVE_SECKEY\" or as a field in thr Rave struct")
 		} else {
 			return r.SecretKey
 		}
