@@ -8,9 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-	// "io/ioutil"
 	"runtime"
-	// "github.com/antonholmquist/jason"
 )
 
 var noresponse = map[string]interface{}{
@@ -18,7 +16,7 @@ var noresponse = map[string]interface{}{
 }
 
 // Converts map[string]interface{} to JSON
-func mapToJSON(mapData interface{}) []byte {
+func MapToJSON(mapData interface{}) []byte {
 	jsonBytes, err := json.Marshal(mapData)
 	if err != nil {
 		panic(err)
@@ -46,7 +44,7 @@ func CheckRequiredParameters(params map[string]interface{}, keys []string) error
 
 // Makes a post request to rave api
 func MakePostRequest(data interface{}, url string) (error error, response map[string]interface{}) {
-	postData := mapToJSON(data)
+	postData := MapToJSON(data)
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(postData))
 	if err != nil {
 		return err, noresponse
@@ -57,6 +55,7 @@ func MakePostRequest(data interface{}, url string) (error error, response map[st
 
 }
 
+// Makes a get request to rave api
 func MakeGetRequest(url string, params map[string]string) (error error, response map[string]interface{}) {
 	var addToUrl string = "?"
 	for k, v := range params {
@@ -75,20 +74,3 @@ func MakeGetRequest(url string, params map[string]string) (error error, response
 
 }
 
-// // makes a post request to rave api
-// func MakePostRequest(data map[string]interface{}, URL string) ([]byte) {
-//     postData, err := json.Marshal(data)
-//     if err != nil {
-//         fmt.Println(err)
-//     }
-
-// 	resp, err := http.Post(URL, "application/json", bytes.NewBuffer(postData))
-
-//     body, err := ioutil.ReadAll(resp.Body)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	return body
-
-// }

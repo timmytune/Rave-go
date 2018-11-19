@@ -6,7 +6,6 @@ import (
 	"crypto/md5"
 	"encoding/base64"
 	"encoding/hex"
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -136,7 +135,6 @@ func (r Rave) GetPublicKey() string {
 
 // gets the secret key
 func (r Rave) GetSecretKey() string {
-	fmt.Println("SEC", r.SecretKey)
 	secKey, ok := os.LookupEnv("RAVE_SECKEY")
 	if !ok {
 		if r.SecretKey == "" {
