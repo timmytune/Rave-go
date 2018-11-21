@@ -3,6 +3,7 @@ package transfer
 import (
 	"Rave-go/rave"
 	"Rave-go/rave/helper"
+	"fmt"
 	"go/types"
 )
 
@@ -182,5 +183,6 @@ func (t Transfer) ResolveAccount(account_data AccountResolveData) (error error, 
 	if err != nil {
 		return err, noresponse
 	}
+	fmt.Printf("%v\n", response["status"])
 	return nil, response
 }
