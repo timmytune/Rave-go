@@ -87,9 +87,10 @@ var Endpoints = map[string]map[string]string{
 		"activate": "v2/gpx/subscriptions/",
 	},
 	"subaccount": {
-		"create": "v2/gpx/subaccounts/create",
-		"list":   "v2/gpx/subaccounts/",
-		"fetch":  "v2/gpx/subaccounts/get",
+		"create":  "v2/gpx/subaccounts/create",
+		"list":    "v2/gpx/subaccounts/",
+		"fetch":   "v2/gpx/subaccounts/get",
+		"delete":  "v2/gpx/subaccounts/delete",
 	},
 	"transfer": {
 		"initiate":            "v2/gpx/transfers/create",

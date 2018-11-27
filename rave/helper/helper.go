@@ -61,7 +61,6 @@ func MakeGetRequest(url string, params map[string]string) (error error, response
 	for k, v := range params {
 		addToUrl += fmt.Sprintf("%s=%s&", k, v)
 	}
-	fmt.Println(addToUrl)
 	url += addToUrl
 	fmt.Println(url)
 	resp, err := http.Get(url)
@@ -73,4 +72,5 @@ func MakeGetRequest(url string, params map[string]string) (error error, response
 	return nil, result
 
 }
+
 
