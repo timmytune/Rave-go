@@ -1,6 +1,7 @@
-package rave
+package refund
 
 import (
+	"Rave-go/rave"
 	"Rave-go/rave/helper"
 )
 
@@ -22,8 +23,11 @@ type RefundData struct {
 	SecretKey      string         `json:"seckey"`
 }
 
+type Refund struct {
+	rave.Rave
+}
 
-func (r Rave) RefundTransaction(data RefundData) (error error, response map[string]interface{}) {
+func (r Refund) RefundTransaction(data RefundData) (error error, response map[string]interface{}) {
 	data.SecretKey = r.GetSecretKey()
 	url := r.GetBaseURL() + r.GetEndpoint("refund", "refund")
 	err, response := helper.MakePostRequest(data, url)
