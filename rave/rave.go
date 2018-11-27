@@ -126,7 +126,7 @@ func (r Rave) GetPublicKey() string {
 	pubKey, ok := os.LookupEnv("RAVE_PUBKEY")
 	if !ok {
 		if r.PublicKey == "" {
-			log.Fatal("You need to set the your public key as an environment variable \"RAVE_PUBKEY\" or as a field in thr Rave struct")
+			log.Fatal("You need to set the your public key as an environment variable \"RAVE_PUBKEY\" or as a field in the Rave struct")
 		} else {
 			return r.PublicKey
 		}
@@ -139,7 +139,7 @@ func (r Rave) GetSecretKey() string {
 	secKey, ok := os.LookupEnv("RAVE_SECKEY")
 	if !ok {
 		if r.SecretKey == "" {
-			log.Fatal("You need to set the your secret key as an environment variable \"RAVE_SECKEY\" or as a field in thr Rave struct")
+			log.Fatal("You need to set the your secret key as an environment variable \"RAVE_SECKEY\" or as a field in the Rave struct")
 		} else {
 			return r.SecretKey
 		}
