@@ -1,10 +1,7 @@
-package payment
+package rave
 
 import (
-	"Rave-go/rave"
-	"Rave-go/rave/helper"
 	"go/types"
-	
 )
 
 
@@ -115,22 +112,26 @@ type PreauthRefundData struct {
 }
 
 type Card struct {
-	rave.Rave
+	Rave
 }
 
-func (c Card) ChargeCard(data CardChargeData) (error error, response map[string]interface{}) {
-	var url string
-	// if (data.Txref == "") {
-	// 	data.Txref = GenerateRef()
-	// }
-	chargeJSON := helper.MapToJSON(data)
+func (c Card) SetupCharge(data CardChargeData) map[string]interface{} {
+	chargeJSON := MapToJSON(data)
 	encryptedChargeData := c.Encrypt(string(chargeJSON[:]))
 	queryParam := map[string]interface{}{
         "PBFPubKey": c.GetPublicKey(),
         "client": encryptedChargeData,
         "alg": "3DES-24",
+    }
+	return queryParam
+}
+
+func (c Card) ChargeCard(data CardChargeData) (error error, response map[string]interface{}) {
+	var url string
+	if (data.Txref == "") {
+		data.Txref = GenerateRef()
 	}
-	// postData := SetupCharge(data)
+	postData := c.SetupCharge(data)
 	
 	if data.Chargetype == "preauth" {
 		url = c.GetBaseURL() + c.GetEndpoint("preauth", "charge")
@@ -138,38 +139,26 @@ func (c Card) ChargeCard(data CardChargeData) (error error, response map[string]
 		url = c.GetBaseURL() + c.GetEndpoint("card", "charge")
 	}
 
-	err, response := helper.MakePostRequest(queryParam, url)
+	err, response := MakePostRequest(postData, url)
 	if err != nil {
 		return err, noresponse
 	}
+
 	suggestedAuth := response["data"].(map[string]interface{})["suggested_auth"]
 	if (suggestedAuth == "PIN") {
 		data.SuggestedAuth = "PIN"
-		chargeJSON = helper.MapToJSON(data)
-		encryptedChargeData = c.Encrypt(string(chargeJSON[:]))
-		queryParam = map[string]interface{}{
-			"PBFPubKey": c.GetPublicKey(),
-			"client": encryptedChargeData,
-			"alg": "3DES-24",
-		}
-		err, response = helper.MakePostRequest(queryParam, url)
+		postData = c.SetupCharge(data)
+		err, response = MakePostRequest(postData, url)
 		if err != nil {
 			return err, noresponse
 		}
 	} else if (suggestedAuth == "AVS_VBVSECURECODE") {
 		data.SuggestedAuth = "AVS_VBVSECURECODE"
-		chargeJSON = helper.MapToJSON(data)
-		encryptedChargeData = c.Encrypt(string(chargeJSON[:]))
-		queryParam = map[string]interface{}{
-			"PBFPubKey": c.GetPublicKey(),
-			"client": encryptedChargeData,
-			"alg": "3DES-24",
-		}
-		err, response = helper.MakePostRequest(queryParam, url)
+		postData = c.SetupCharge(data)
+		err, response = MakePostRequest(postData, url)
 		if err != nil {
 			return err, noresponse
 		}
-
 	}
 
 	return nil, response
@@ -179,7 +168,7 @@ func (c Card) ChargeCard(data CardChargeData) (error error, response map[string]
 func (c Card) ValidateCard(data CardValidateData) (error error, response map[string]interface{}) {
 	data.PublicKey = c.GetPublicKey()
 	url := c.GetBaseURL() + c.GetEndpoint("card", "validate")
-	err, response := helper.MakePostRequest(data, url)
+	err, response := MakePostRequest(data, url)
 	if err != nil {
 		return err, noresponse
 	}
@@ -190,7 +179,7 @@ func (c Card) ValidateCard(data CardValidateData) (error error, response map[str
 func (c Card) VerifyCard(data CardVerifyData) (error error, response map[string]interface{}) {
 	data.SecretKey = c.GetSecretKey()
 	url := c.GetBaseURL() + c.GetEndpoint("card", "verify")
-	err, response := helper.MakePostRequest(data, url)
+	err, response := MakePostRequest(data, url)
 	
 	transactionRef := response["data"].(map[string]interface{})["txref"].(string)
 	status := response["status"].(string) 
@@ -218,7 +207,7 @@ func (c Card) VerifyCard(data CardVerifyData) (error error, response map[string]
 func (c Card) TokenizedCharge(data SaveCardChargeData) (error error, response map[string]interface{}) {
 	data.SecretKey = c.GetSecretKey()
 	url := c.GetBaseURL() + c.GetEndpoint("card", "chargeSavedCard")
-	err, response := helper.MakePostRequest(data, url)
+	err, response := MakePostRequest(data, url)
 	if err != nil {
 		return err, noresponse
 	}
@@ -241,7 +230,7 @@ func (c Card) ChargePreauth(data CardChargeData) (error error, response map[stri
 func (c Card) CapturePreauth(data PreauthCaptureData) (error error, response map[string]interface{}) {
 	data.SecretKey = c.GetSecretKey()
 	url := c.GetBaseURL() + c.GetEndpoint("preauth", "capture")
-	err, response := helper.MakePostRequest(data, url)
+	err, response := MakePostRequest(data, url)
 	if err != nil {
 		return err, noresponse
 	}
@@ -252,7 +241,7 @@ func (c Card) CapturePreauth(data PreauthCaptureData) (error error, response map
 func (c Card) RefundOrVoidPreauth(data PreauthRefundData) (error error, response map[string]interface{}) {
 	data.SecretKey = c.GetSecretKey()
 	url := c.GetBaseURL() + c.GetEndpoint("preauth", "refundorvoid")
-	err, response := helper.MakePostRequest(data, url)
+	err, response := MakePostRequest(data, url)
 	if err != nil {
 		return err, noresponse
 	}

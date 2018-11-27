@@ -1,8 +1,6 @@
-package payment
+package rave
 
 import (
-	"Rave-go/rave"
-	"Rave-go/rave/helper"
 	"go/types"
 )
 
@@ -66,20 +64,21 @@ type AccountVerifyData struct {
 }
 
 type Account struct {
-	rave.Rave
+	Rave
 }
 
 func (a Account) ChargeAccount(data AccountChargeData) (error error, response map[string]interface{}) {
-	chargeJSON := helper.MapToJSON(data)
+	chargeJSON := MapToJSON(data)
 	encryptedChargeData := a.Encrypt(string(chargeJSON[:]))
 	queryParam := map[string]interface{}{
         "PBFPubKey": a.GetPublicKey(),
         "client": encryptedChargeData,
         "alg": "3DES-24",
-    }
+	}
 	
 	url := a.GetBaseURL() + a.GetEndpoint("account", "charge")
-	err, response := helper.MakePostRequest(queryParam, url)
+
+	err, response := MakePostRequest(queryParam, url)
 	if err != nil {
 		return err, noresponse
 	}
@@ -92,7 +91,7 @@ func (a Account) ChargeAccount(data AccountChargeData) (error error, response ma
 func (a Account) ValidateAccount(data AccountValidateData) (error error, response map[string]interface{}) {
 	data.PublicKey = a.GetPublicKey()
     url := a.GetBaseURL() + a.GetEndpoint("account", "validate")
-    err, response := helper.MakePostRequest(data, url)
+    err, response := MakePostRequest(data, url)
     if err != nil {
         return err, noresponse
     }
@@ -100,10 +99,11 @@ func (a Account) ValidateAccount(data AccountValidateData) (error error, respons
     return nil, response
 }
 
+// Verifies the transaction, amount, and currency
 func (a Account) VerifyAccount(data AccountVerifyData) (error error, response map[string]interface{}) {
 	data.SecretKey = a.GetSecretKey()
     url := a.GetBaseURL() + a.GetEndpoint("account", "verify")
-	err, response := helper.MakePostRequest(data, url)
+	err, response := MakePostRequest(data, url)
 	
 	transactionRef := response["data"].(map[string]interface{})["txref"].(string)
 	status := response["status"].(string) 

@@ -1,5 +1,4 @@
-
-package payment
+package rave
 
 import (
 	"Rave-go/rave"

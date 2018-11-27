@@ -1,9 +1,6 @@
-package subaccount
+package rave
 
 import (
-	"Rave-go/rave"
-	"Rave-go/rave/helper"
-	// "strconv"
 	"go/types"
 )
 
@@ -47,17 +44,13 @@ type ListSubaccountData struct {
 }
 
 type Subaccount struct {
-	rave.Rave
-}
-
-var noresponse = map[string]interface{}{
-	"": "",
+	Rave
 }
 
 func (s Subaccount) CreateSubaccount(data CreateSubaccountData) (error error, response map[string]interface{}) {
 	data.Seckey = s.GetSecretKey()
 	url := s.GetBaseURL() + s.GetEndpoint("subaccount", "create")
-	err, response := helper.MakePostRequest(data, url)
+	err, response := MakePostRequest(data, url)
 	if err != nil {
 		return err, noresponse
 	}
@@ -72,7 +65,7 @@ func (s Subaccount) ListSubaccount(data ListSubaccountData) (error error, respon
 		"bank_name": data.BankName,
 	}
 	url := s.GetBaseURL() + s.GetEndpoint("subaccount", "list")
-	err, response := helper.MakeGetRequest(url, queryParam)
+	err, response := MakeGetRequest(url, queryParam)
 	if err != nil {
 		return err, noresponse
 	}
@@ -84,7 +77,7 @@ func (s Subaccount) FetchSubaccount(id string) (error error, response map[string
 		"seckey": s.GetSecretKey(),	
 	}
 	url := s.GetBaseURL() + s.GetEndpoint("subaccount", "fetch") + "/" + id
-	err, response := helper.MakeGetRequest(url, queryParam)
+	err, response := MakeGetRequest(url, queryParam)
 	if err != nil {
 		return err, noresponse
 	}
@@ -98,7 +91,7 @@ func (s Subaccount) DeleteSubaccount(id string) (error error, response map[strin
 	}
 
 	url := s.GetBaseURL() + s.GetEndpoint("subaccount", "delete")
-	err, response := helper.MakePostRequest(paymentData, url)
+	err, response := MakePostRequest(paymentData, url)
 	if err != nil {
 		return err, noresponse
 	}

@@ -1,23 +1,75 @@
-package payment
+//  helper functions
+
+package rave
 
 import (
-	// "Rave-go/rave/helper"
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"net/http"
+	"strings"
+	"runtime"
 	"math/rand"
-	// "time"
-	
 )
 
-// func SetupCharge(data) () {
-// 	chargeJSON := helper.MapToJSON(data)
-// 	encryptedChargeData := c.Encrypt(string(chargeJSON[:]))
-// 	queryParam := map[string]interface{}{
-//         "PBFPubKey": c.GetPublicKey(),
-//         "client": encryptedChargeData,
-//         "alg": "3DES-24",
-//     }
-// 	return queryParam
-// }
+// Converts map[string]interface{} to JSON
+func MapToJSON(mapData interface{}) []byte {
+	jsonBytes, err := json.Marshal(mapData)
+	if err != nil {
+		panic(err)
+	}
+
+	return jsonBytes
+}
+
+// Checks if all required parameters are present
+func CheckRequiredParameters(params map[string]interface{}, keys []string) error {
+	for _, key := range keys {
+
+		if _, ok := params[key]; !ok {
+			pc := make([]uintptr, 10)
+			runtime.Callers(2, pc)
+			f := runtime.FuncForPC(pc[0]).Name()
+			details := strings.Split(f, ".")
+			funcName := details[len(details)-1]
+			return fmt.Errorf("%s is a required parameter for %s\n", key, funcName)
+		}
+	}
+
+	return nil
+}
+
+// Makes a post request to rave api
+func MakePostRequest(data interface{}, url string) (error error, response map[string]interface{}) {
+	postData := MapToJSON(data)
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(postData))
+	if err != nil {
+		return err, noresponse
+	}
+	var result map[string]interface{}
+	json.NewDecoder(resp.Body).Decode(&result)
+	return nil, result
+
+}
+
+// Makes a get request to rave api
+func MakeGetRequest(url string, params map[string]string) (error error, response map[string]interface{}) {
+	var addToUrl string = "?"
+	for k, v := range params {
+		addToUrl += fmt.Sprintf("%s=%s&", k, v)
+	}
+	url += addToUrl
+	fmt.Println(url)
+	resp, err := http.Get(url)
+	if err != nil {
+		return err, noresponse
+	}
+	var result map[string]interface{}
+	json.NewDecoder(resp.Body).Decode(&result)
+	return nil, result
+
+}
+
 func randInt(min int, max int) int {
     return min + rand.Intn(max-min)
 }
@@ -27,7 +79,8 @@ func GenerateRef() string {
     for i := 0; i < len; i++ {
         bytes[i] = byte(randInt(65, 90))
     }
-    return "MC-" + string(bytes)
+	return "MC-" + string(bytes)
+	
 }
 
 // Checks that the transaction reference(TxRef) match
