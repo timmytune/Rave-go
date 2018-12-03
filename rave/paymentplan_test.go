@@ -1,6 +1,7 @@
 package rave
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -16,14 +17,14 @@ func TestPaymentPlan_Create(t *testing.T) {
 	payloads := []PaymentPlanData{
 		{
 			Amount:   "2000",
-			Name:     "Killer",
+			Name:     "Poverty",
 			Interval: "daily",
 			Duration: "12",
 			Seckey:   r.GetSecretKey(),
 		},
 		{
 			Amount:   "400",
-			Name:     "Killer Bean",
+			Name:     "Bean",
 			Interval: "monthly",
 			Duration: "12",
 			Seckey:   r.GetSecretKey(),
@@ -43,6 +44,7 @@ func TestPaymentPlan_Create(t *testing.T) {
 
 func TestPaymentPlan_List(t *testing.T) {
 	err, response := p.List()
+	fmt.Println(response)
 	if err != nil {
 		t.Fatalf("An error occurred while testing single transfer: %v", err)
 	}
@@ -55,6 +57,7 @@ func TestPaymentPlan_Fetch(t *testing.T) {
 	planIds := [4]string{"1140", "1139", "1138", "1136"}
 	for _, planId := range planIds {
 		err, response := p.Fetch(planId)
+		fmt.Println(response)
 		if err != nil {
 			t.Fatalf("An error occurred while testing single transfer: %v", err)
 		}
@@ -84,6 +87,7 @@ func TestPaymentPlan_Edit(t *testing.T) {
 
 	for _, payload := range payloads {
 		err, response := p.Edit(payload.Id, payload.Name, payload.Status)
+		fmt.Println(response)
 		if err != nil {
 			t.Fatalf("An error occurred while testing single transfer: %v", err)
 		}

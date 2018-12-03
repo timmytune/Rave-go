@@ -18,19 +18,7 @@ type CardVerify interface {
 }
 
 type CardTokenized interface {
-	TokenizedCharge(data SaveCardChargeData) (error error, response map[string]interface{})
-}
-
-type PreauthCharge interface {
-	ChargePreauth(data CardChargeData) (error error, response map[string]interface{})
-}
-
-type PreauthCapture interface {
-	CapturePreauth(data CardValidateData) (error error, response map[string]interface{})
-}
-
-type PreauthRefundOrVoid interface {
-	RefundOrVoidPreauth(data CardVerifyData) (error error, response map[string]interface{})
+	TokenizedCharge(data TokenizedChargeData) (error error, response map[string]interface{})
 }
 
 type CardInterface interface {
@@ -38,9 +26,6 @@ type CardInterface interface {
 	CardValidate
 	CardVerify
 	CardTokenized
-	PreauthCharge
-	PreauthCapture
-	PreauthRefundOrVoid
 }
 
 type CardChargeData struct {
@@ -85,7 +70,7 @@ type CardVerifyData struct {
 	SecretKey      string         `json:"SECKEY"`
 }
 
-type SaveCardChargeData struct {
+type TokenizedChargeData struct {
 	SecretKey      string         `json:"SECKEY"`
 	Currency       string         `json:"currency"`
 	Token          string         `json:"token"`
@@ -96,19 +81,6 @@ type SaveCardChargeData struct {
 	Lastname       string         `json:"lastname"`
 	Ip             string         `json:"IP"`
 	Txref		   string	      `json:"txRef"`
-}
-
-type PreauthCaptureData struct {
-	SecretKey      string         `json:"SECKEY"`
-	Amount	       float64	      `json:"amount"`
-	Flwref	       string	      `json:"flwRef"`
-
-}
-
-type PreauthRefundData struct {
-	Flwref	       string	          `json:"ref"`
-	Action	       string	          `json:"action"`
-	SecretKey      string             `json:"SECKEY"`
 }
 
 type Card struct {
@@ -132,13 +104,13 @@ func (c Card) ChargeCard(data CardChargeData) (error error, response map[string]
 		data.Txref = GenerateRef()
 	}
 	postData := c.SetupCharge(data)
-	
+
 	if data.Chargetype == "preauth" {
 		url = c.GetBaseURL() + c.GetEndpoint("preauth", "charge")
 	} else {
 		url = c.GetBaseURL() + c.GetEndpoint("card", "charge")
 	}
-
+	
 	err, response := MakePostRequest(postData, url)
 	if err != nil {
 		return err, noresponse
@@ -204,7 +176,7 @@ func (c Card) VerifyCard(data CardVerifyData) (error error, response map[string]
 
 }
 
-func (c Card) TokenizedCharge(data SaveCardChargeData) (error error, response map[string]interface{}) {
+func (c Card) TokenizedCharge(data TokenizedChargeData) (error error, response map[string]interface{}) {
 	data.SecretKey = c.GetSecretKey()
 	url := c.GetBaseURL() + c.GetEndpoint("card", "chargeSavedCard")
 	err, response := MakePostRequest(data, url)
@@ -216,36 +188,3 @@ func (c Card) TokenizedCharge(data SaveCardChargeData) (error error, response ma
 
 }
 
-func (c Card) ChargePreauth(data CardChargeData) (error error, response map[string]interface{}) {
-	data.Chargetype = "preauth"
-	err, response := c.ChargeCard(data)
-	if err != nil {
-		return err, noresponse
-	}
-
-	return nil, response
-
-}
-
-func (c Card) CapturePreauth(data PreauthCaptureData) (error error, response map[string]interface{}) {
-	data.SecretKey = c.GetSecretKey()
-	url := c.GetBaseURL() + c.GetEndpoint("preauth", "capture")
-	err, response := MakePostRequest(data, url)
-	if err != nil {
-		return err, noresponse
-	}
-	return nil, response
-
-}
-
-func (c Card) RefundOrVoidPreauth(data PreauthRefundData) (error error, response map[string]interface{}) {
-	data.SecretKey = c.GetSecretKey()
-	url := c.GetBaseURL() + c.GetEndpoint("preauth", "refundorvoid")
-	err, response := MakePostRequest(data, url)
-	if err != nil {
-		return err, noresponse
-	}
-	
-	return nil, response
-
-}

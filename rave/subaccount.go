@@ -16,10 +16,15 @@ type FetchSubaccount interface {
 	FetchSubaccount(id string) (error error, response map[string]interface{})
 }
 
+type DeleteSubaccount interface {
+	DeleteSubaccount(id string) (error error, response map[string]interface{})
+}
+
 type SubaccountInterface interface {
 	CreateSubaccount
 	ListSubaccount
 	FetchSubaccount	
+	DeleteSubaccount
 }
 
 type CreateSubaccountData struct {

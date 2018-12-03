@@ -5,6 +5,8 @@ This is a Go wrapper around the [API](https://flutterwavedevelopers.readme.io/v2
 #### Payment types implemented:
 * Card Payments
 * Bank Account Payments
+* Preauth
+* Refund
 * Subaccount
 * Transfer
 * Payment Plan
@@ -124,6 +126,7 @@ A sample initiate call is:
 
 ```
     payload := rave.CardChargeData{
+
         Amount:100,
 		Txref:"MC-11001993",
 		Email:"test@test.com",
@@ -180,7 +183,7 @@ A sample initiate call is:
 ```
 
 ### ```.VerifyCard(data CardVerifyData) (error error, response map[string]interface{})```
-This is called to validate a card charge. The payload should be of type ```rave.CardValidateData```. See below for  ```rave.CardValidateData``` definition
+This is called to validate a card charge. The payload should be of type ```rave.CardVerifyData```. See below for  ```rave.CardVerifyData``` definition
 ```
 type CardVerifyData struct {
 	Reference	   string	      `json:"transaction_reference"`
@@ -199,6 +202,170 @@ A sample initiate call is:
     }
 
     err, response := card.VerifyCard(payload)
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println(response)
+```
+#### Sample Response
+
+```
+
+```
+### ```.TokenizedCharge(data SaveCardChargeData) (error error, response map[string]interface{})```
+This is called to charge a saved card using a token(which can be gotten in the [verify payment response](https://developer.flutterwave.com/v2.0/reference#save-a-card)). The payload should be of type ```rave.TokenizedChargeData```. See below for  ```rave.TokenizedChargeData``` definition
+```
+type TokenizedChargeData struct {
+    SecretKey      string         `json:"SECKEY"`
+	Currency       string         `json:"currency"`
+	Token          string         `json:"token"`
+	Country        string         `json:"country"`
+	Amount	       float64	      `json:"amount"`
+	Email          string         `json:"email"`
+	Firstname      string         `json:"firstname"`
+	Lastname       string         `json:"lastname"`
+	Ip             string         `json:"IP"`
+	Txref		   string	      `json:"txRef"`
+}
+
+```
+A sample initiate call is:
+
+```
+    payload := rave.TokenizedChargeData{
+        Token: "flw-t1nf-2f00ba4c24b27cbb39e7907c6b72d413-m03k",
+		Currency:"NGN",
+	 	Country:"NG",
+	 	Amount:100,
+	 	Email:"test@test.com",
+	 	Txref:"MC-0123456789",
+    }
+
+    err, response := card.TokenizedCharge(payload)
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println(response)
+```
+#### Sample Response
+
+```
+
+```
+
+## ```rave.Refund{}```
+This allows you initiate refunds for Successful transactions via rave. ```rave.Refund{}``` is of type ```struct``` and requires  ```rave.Rave``` as its only property.
+
+Hence, in order to use it, you need to pass in an instance of ```rave.Rave``` . A sample is shown below
+
+```
+    var transfer = rave.Refund{
+    	r,
+    }
+```
+
+**Methods Included:**
+
+* ```.RefundTransaction```
+
+### ```.RefundTransaction(data RefundData) (error error, response map[string]interface{})```
+This is called to initiate refunds for Successful transaction. The payload should be of type ```rave.RefundData```. See below for  ```rave.RefundData``` definition
+
+```
+type RefundData struct {
+	Ref		       string	      `json:"ref"`
+	Amount         int            `json:"amount"`
+	SecretKey      string         `json:"seckey"`
+}
+```
+
+A sample refund call is:
+
+```
+    payload := rave.RefundData{
+        Ref: "FLW-MOCK-476a260e67df43988a2ffeddf8e02cc2",
+		Amount: 100,
+    }
+
+    err, response := refund.RefundTransaction(payload)
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println(response)
+```
+
+#### Sample Response
+
+```
+
+```
+
+## ```rave.Preauth{}```
+This is used to facilitate preauthorised card transactions via rave. ```rave.Preauth{}``` is of type ```struct``` and requires  ```rave.Rave``` as its only property. This inherits the Card class so any task you can do on Card, you can do with preauth.
+
+Hence, in order to use it, you need to pass in an instance of ```rave.Rave``` . A sample is shown below
+
+```
+    var card = rave.Preauth{
+    	r,
+    }
+```
+**Methods Included:**
+
+* ```.ChargePreauth```
+
+* ```.VerifyPreauth```
+
+* ```.PreauthTokenizedCharge```
+
+* ```.CapturePreauth```
+
+* ```.RefundOrVoidPreauth```
+
+### ```.CapturePreauth(data PreauthCaptureData) (error error, response map[string]interface{})```
+This is called to preauthorize a card. The payload should be of type ```rave.PreauthCaptureData```. 
+
+A sample initiate call is:
+
+```
+    payload := rave.PreauthCaptureData{
+        Amount:100,
+        Flwref: ref
+
+    }
+
+    err, response := card.CapturePreauth(payload)
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println(response)
+```
+#### Sample Response
+
+```
+
+```
+
+### ```.ChargePreauth(data CardChargeData) (error error, response map[string]interface{})```
+This is called to preauthorize a card. The payload should be of type ```rave.CardChargeData```. 
+
+A sample initiate call is:
+
+```
+    payload := rave.CardChargeData{
+        Amount:100,
+		Txref:"MC-11001993",
+		Email:"test@test.com",
+		CustomerPhone:"08123456789",
+		Currency:"NGN",
+		Cardno:"5399838383838381",
+		Cvv:"470",
+		Expirymonth:"10",
+		Expiryyear:"22",
+		Pin: "3310",
+    }
+
+    err, response := card.ChargePreauth(payload)
     if err != nil {
         panic(err)
     }
@@ -508,4 +675,145 @@ A sample initiate call is:
 
 ```
 map[message:ACCOUNT RESOLVED data:map[data:map[responsecode:00 accountnumber:0690000034 accountname:Ade Bond responsemessage:Approved Or Completed Successfully phonenumber:<nil> uniquereference:FLWT001034195 internalreference:<nil>] status:success] status:success]
+```
+
+## ```rave.Subaccount{}```
+This is used to facilitate Subaccount operations via rave. ```rave.Subaccount{}``` is of type ```struct``` and requires  ```rave.Rave``` as its only property.
+
+Hence, in order to use it, you need to pass in an instance of ```rave.Rave``` . A sample is shown below
+
+```
+    var transfer = rave.Subaccount{
+    	r,
+    }
+```
+
+**Methods Included:**
+
+* ```.CreateSubaccount```
+
+* ```.ListSubaccount```
+
+* ```.FetchSubaccount```
+
+* ```.DeleteSubaccount```
+
+### ```.CreateSubaccount(data CreateSubaccountData) (error error, response map[string]interface{})```
+This is called to create a subaccount. The payload should be of type ```rave.CreateSubaccountData```. See below for  ```rave.CreateSubaccountData``` definition
+
+```
+type CreateSubaccountData struct {
+	AccountBank                   string         `json:"account_bank"`
+	AccountNumber                 string         `json:"account_number"`
+	BusinessName                  string         `json:"business_name"`
+	BusinessEmail                 string         `json:"business_email"`
+	BusinessContact               string         `json:"business_contact"`
+	BusinessMobile                string         `json:"business_mobile"`
+	BusinessContactMobile         string         `json:"business_contact_mobile"`
+	Seckey                        string         `json:"seckey"`
+	Meta                          types.Slice    `json:"meta"`
+	SplitType                     string         `json:"split_type"`
+	SplitValue                    string         `json:"split_value"`
+}
+```
+
+A sample create call is:
+
+```
+    payload := rave.CreateSubaccountData{
+        AccountBank: "044",
+	 	AccountNumber: "0690000035",
+	 	BusinessName: "Test",
+	 	BusinessEmail: "test@test.com",
+	 	BusinessContact: "Seun Alade",
+	 	BusinessContactMobile: "09012345678",
+	 	BusinessMobile: "09087930123",
+	 	SplitType: "flat",
+	 	SplitValue: "100",
+    }
+
+    err, response := subaccount.CreateSubaccount(payload)
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println(response)
+```
+
+#### Sample Response
+
+```
+
+```
+### ```.ListSubaccount(data ListSubaccountData) (error error, response map[string]interface{})```
+This is called to list all or specific subaccounts. The payload should be of type ```rave.ListSubaccountData```. See below for  ```rave.ListSubaccountData``` definition
+
+```
+type ListSubaccountData struct {
+	AccountBank               string         `json:"account_bank"`
+	AccountNumber             string         `json:"account_number"`
+	BankName                  string         `json:"bank_name"`
+	Seckey                    string         `json:"seckey"`
+}
+```
+
+A sample list call is:
+
+```
+    payload := rave.ListSubaccountData{
+        AccountNumber: "0690000035",
+    }
+
+    err, response := subaccount.ListSubaccount(payload)
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println(response)
+```
+
+#### Sample Response
+
+```
+
+```
+### ```.FetchSubaccount(id string) (error error, response map[string]interface{})```
+This allows you fetch a single subaccount using the subaccount ID. The ID should be of type ```string``` and it is required.
+
+A sample fetch call is:
+
+
+```
+    id = "example_id"
+
+    err, response := subaccount.FetchSubaccount(id)
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println(response)
+```
+
+#### Sample Response
+
+```
+
+```
+### ```.DeleteSubaccount(id string) (error error, response map[string]interface{})```
+This allows you to delete a subaccount by the subaccount ID. The ID should be of type ```string``` and it is required.
+
+A sample delete call is:
+
+
+```
+    id = "example_id"
+
+    err, response := subaccount.DeleteSubaccount(id)
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println(response)
+```
+
+#### Sample Response
+
+```
+
 ```
