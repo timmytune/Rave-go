@@ -128,7 +128,7 @@ func VerifyCurrencyCode(apiCurrencyCode, funcCurrencyCode interface{}) error {
 // The Charged Amount must be greater than or equal to the paid amount
 func VerifyChargedAmount(apiChargedAmount, funcChargedAmount float64) error {
 	if funcChargedAmount < apiChargedAmount {
-		return fmt.Errorf("Transaction not verified, charged amount should be greater or equal amount to be paid")
+		return fmt.Errorf("Transaction not verified, incorrect amount: charged amount should be greater or equal amount to be paid")
 	}
 
 	return nil

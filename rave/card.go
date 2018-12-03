@@ -81,6 +81,7 @@ type TokenizedChargeData struct {
 	Lastname       string         `json:"lastname"`
 	Ip             string         `json:"IP"`
 	Txref		   string	      `json:"txRef"`
+	Chargetype	  string	        `json:"charge_type"`
 }
 
 type Card struct {

@@ -1,21 +1,11 @@
 package rave
 
-// import (
-// 	// "go/types"
-
-// )
-
-
 type PreauthCharge interface {
-	ChargePreauth(data CardChargeData) (error error, response map[string]interface{})
+	ChargePreauth(data TokenizedChargeData) (error error, response map[string]interface{})
 }
 
 type PreauthVerify interface {
 	VerifyPreauth(data CardVerifyData) (error error, response map[string]interface{})
-}
-
-type PreauthTokenized interface {
-	PreauthTokenizedCharge(data TokenizedChargeData) (error error, response map[string]interface{})
 }
 
 type PreauthCapture interface {
@@ -29,7 +19,6 @@ type PreauthRefundOrVoid interface {
 type PreauthInterface interface {
 	PreauthCharge
 	PreauthVerify
-	PreauthTokenized
 	PreauthCapture
 	PreauthRefundOrVoid
 }
@@ -53,14 +42,15 @@ type Preauth struct {
 	Card
 }
 
-func (p Preauth) ChargePreauth(data CardChargeData) (error error, response map[string]interface{}) {
+func (p Preauth) ChargePreauth(data TokenizedChargeData) (error error, response map[string]interface{}) {
 	data.Chargetype = "preauth"
-	err, response := p.ChargeCard(data)
-
+	data.SecretKey = p.GetSecretKey()
+	url := p.GetBaseURL() + p.GetEndpoint("preauth", "charge")
+	err, response := MakePostRequest(data, url)
 	if err != nil {
 		return err, noresponse
 	}
-
+	
 	return nil, response
 
 }
@@ -75,18 +65,6 @@ func (p Preauth) VerifyPreauth(data CardVerifyData) (error error, response map[s
 
 	return nil, response
 	
-}
-
-func (p Preauth) PreauthTokenizedCharge(data TokenizedChargeData) (error error, response map[string]interface{}) {
-	data.SecretKey = p.GetSecretKey()
-	url := p.GetBaseURL() + p.GetEndpoint("card", "chargeSavedCard")
-	err, response := MakePostRequest(data, url)
-	if err != nil {
-		return err, noresponse
-	}
-	
-	return nil, response
-
 }
 
 func (p Preauth) CapturePreauth(data PreauthCaptureData) (error error, response map[string]interface{}) {
