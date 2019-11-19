@@ -3,7 +3,7 @@ package rave
 
 
 type Flybuy interface {
-	Flybuy(data FlyBuyData) (error error, response map[string]interface{})
+	Bill(data FlyBuyData) (error error, response map[string]interface{})
 }
 
 

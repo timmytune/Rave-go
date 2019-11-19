@@ -156,6 +156,10 @@ var Endpoints = map[string]map[string]string{
 		"flybuy": "v2/services/confluence",
 	
 	},
+	"flutterwaveOTP": {
+		"otp": "v2/services/confluence",
+	
+	},
 
 
 
