@@ -4,7 +4,7 @@ package rave
 // 	"strconv"
 // )
 
-type Settlement struct {
+type Settlements struct {
 	Rave
 }
 // type ListSettlement interface {
