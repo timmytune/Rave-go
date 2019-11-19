@@ -121,7 +121,7 @@ var Endpoints = map[string]map[string]string{
 	},
 
 	"bvn": {
-		"bvnverification": "v2/kyc/bvn/:bvnnumber",
+		"bvnverification": "v2/kyc/bvn/",
 	},
 
 	"virtualaccount": {
