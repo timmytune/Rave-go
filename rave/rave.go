@@ -87,10 +87,10 @@ var Endpoints = map[string]map[string]string{
 		"activate": "v2/gpx/subscriptions/",
 	},
 	"subaccount": {
-		"create":  "v2/gpx/subaccounts/create",
-		"list":    "v2/gpx/subaccounts/",
-		"fetch":   "v2/gpx/subaccounts/get",
-		"delete":  "v2/gpx/subaccounts/delete",
+		"create": "v2/gpx/subaccounts/create",
+		"list":   "v2/gpx/subaccounts/",
+		"fetch":  "v2/gpx/subaccounts/get",
+		"delete": "v2/gpx/subaccounts/delete",
 	},
 	"transfer": {
 		"initiate":            "v2/gpx/transfers/create",
@@ -106,7 +106,67 @@ var Endpoints = map[string]map[string]string{
 	"refund": {
 		"refund": "gpx/merchant/transactions/refund",
 	},
+	"mobilemoney": {
+		"charge": "flwv3-pug/getpaidx/api/charge",
+	},
+	"virtualcard": {
+		"create":    "v2/services/virtualcards/new",
+		"list":      "v2/services/virtualcards/search",
+		"get":       "v2/services/virtualcards/get",
+		"terminate": "v2/services/virtualcards/",
+		"fund":      "v2/services/virtualcards/fund",
+		"fetch":     "v2/services/virtualcards/transactions",
+		"withdraw":  "v2/services/virtualcards/withdraw",
+		"freeze":    "v2/services/virtualcards/",
+	},
+
+	"bvn": {
+		"bvnverification": "v2/kyc/bvn/",
+	},
+
+	"virtualaccount": {
+		"virtualaccountnumber": "v2/banktransfers/accountnumbers",
+	},
+
+	"settlement": {
+		"list":  "v2/merchant/settlements",
+		"fetch": "v2/merchant/settlements/",
+	},
+
+	"verifytransaction": {
+		"verify": "flwv3-pug/getpaidx/api/v2/verify",
+	},
+
+	"ebills": {
+		"createorder": "flwv3-pug/getpaidx/api/ebills/generateorder/",
+		"updateorder": "flwv3-pug/getpaidx/api/ebills/update/",
+	},
+
+	"Banktransfer": {
+		"charge": "flwv3-pug/getpaidx/api/charge",
+	},
+
+	"Beneficiaries": {
+		"list": "v2/gpx/transfers/beneficiaries",
+		"fetch": "v2/gpx/transfers/beneficiaries",
+		"create": "v2/gpx/transfers/beneficiaries/create",
+		"delete": "v2/gpx/transfers/beneficiaries/delete",
+	},
+	"Billspayments": {
+		"flybuy": "v2/services/confluence",
+	
+	},
+	"flutterwaveOTP": {
+		"otp": "v2/services/confluence",
+	
+	},
+
+
+
+	
 }
+
+
 
 // gets the correct url for live and test mode
 func (r Rave) GetBaseURL() string {
