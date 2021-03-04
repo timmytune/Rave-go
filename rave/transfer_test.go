@@ -12,7 +12,7 @@ func TestTransfer_InitiateSingleTransfer(t *testing.T) {
 			AccountBank:   "044",
 			AccountNumber: "0690000044",
 			Amount:        500,
-			SecKey:        "FLWSECK-e6db11d1f8a6208de8cb2f94e293450e-X",
+			SecKey:        "FLWSECK-xxxxxxxxxxxxxxxxxxxxx-X",
 			Narration:     "New transfer",
 			Currency:      "NGN",
 			Reference:     time.Now().String(),
@@ -21,7 +21,7 @@ func TestTransfer_InitiateSingleTransfer(t *testing.T) {
 			AccountBank:     "044",
 			AccountNumber:   "0690000031",
 			Amount:          500,
-			SecKey:          "FLWSECK-e6db11d1f8a6208de8cb2f94e293450e-X",
+			SecKey:          "FLWSECK-xxxxxxxxxxxxxxxxxxxxx-X",
 			Narration:       "New transfer",
 			Currency:        "NGN",
 			Reference:       time.Now().String(),
@@ -43,7 +43,7 @@ func TestTransfer_InitiateSingleTransfer(t *testing.T) {
 func TestTransfer_InitiateBulkTransfer(t *testing.T) {
 	payloads := []BulkPaymentData{
 		{
-			SecKey: "FLWSECK-0b1d6669cf375a6208db541a1d59adbb-X",
+			SecKey: "FLWSECK-xxxxxxxxxxxxxxxxxxxxx-X",
 			Title:  "May Staff Salary",
 			BulkData: []map[string]string{
 				{
