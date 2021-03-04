@@ -7,8 +7,8 @@ import (
 
 var r = rave.Rave{
 	false,
-	"FLWPUBK-f54d8d24292e377a71620bd82a8bb17c-X",
-	"FLWSECK-a18ca169cb007a93db4479aff683a387-X",
+	"FLWPUBK-xxxxxxxxxxxxxxxxxxxxx-X",
+	"FLWSECK-xxxxxxxxxxxxxxxxxxxxx-X",
 }
 
 func TestCreateSubaccount(t *testing.T) {
