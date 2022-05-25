@@ -35,7 +35,7 @@ type BankTransferData struct {
 	IsPermanent    int         `json:"is_permanent"`
 	Narration      string      `json:"narration"`
 	Duration       int         `json:"duration"`
-	PaymentType   string      `json:"payment_type"`
+	PaymentType    string      `json:"payment_type"`
 }
 
 type Banktransfers struct {
@@ -43,7 +43,7 @@ type Banktransfers struct {
 }
 
 func (b Banktransfers) SetupCharge(data BankTransferData) map[string]interface{} {
-	chargeJSON := MapToJSON(data)
+	chargeJSON, _ := MapToJSON(data)
 	encryptedChargeData := b.Encrypt(string(chargeJSON[:]))
 	queryParam := map[string]interface{}{
 		"PBFPubKey": b.GetPublicKey(),

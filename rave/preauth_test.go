@@ -4,7 +4,6 @@ import (
 	"testing"
 )
 
-
 // func TestValidatePreauth(t *testing.T) {
 // 	var tests = []CardValidateData {
 // 		{
@@ -12,7 +11,7 @@ import (
 // 			Reference: "FLW-MOCK-e80776317e0dc061dd7f04662f308e58",
 // 			// resp["data"].(map[string]interface{})["flwRef"].(string),
 // 		},
-		
+
 // 	}
 
 // 	for _, test := range tests {
@@ -29,50 +28,23 @@ import (
 // }
 
 func TestVerifyPreauth(t *testing.T) {
-	var tests = []CardVerifyData {
+	var tests = []CardVerifyData{
 		{
-			Amount: 30,
-			Currency: "NGN",
+			Amount:    30,
+			Currency:  "NGN",
 			Reference: "MC-11001993",
 		},
-		
 	}
 
 	for _, test := range tests {
 		error, response := Card{
 			r,
 		}.VerifyCard(test)
-		if error != nil{
-			t.Fatalf("Verify Charge failed with error %v",error)
+		if error != nil {
+			t.Fatalf("Verify Charge failed with error %v", error)
 		}
-		if response["status"] != "success"{
-			t.Fatalf("Verify Charge status: %v, Details: %v",response["status"], response)
-		}
-	}
-}
-
-func TestPreauthTokenizedCharge(t *testing.T) {
-	var tests = []SaveCardChargeData {
-		{
-			Token:"flw-t1nf-2f00ba4c24b27cbb39e7907c6b72d413-m03k",
-			Currency:"NGN",
-			Country:"NG",
-			Amount:100,
-			Email:"kwaku@gmail.com",
-			Txref:"MC-0123456789",
-		},
-		
-	}
-
-	for _, test := range tests {
-		error, response := Card{
-			r,
-		}.TokenizedCharge(test)
-		if error != nil{
-			t.Fatalf("Tokenized Charge failed with error %v",error)
-		}
-		if response["status"] != "success"{
-			t.Fatalf("Tokenized Charge status: %v, Details: %v",response["status"], response)
+		if response["status"] != "success" {
+			t.Fatalf("Verify Charge status: %v, Details: %v", response["status"], response)
 		}
 	}
 }
@@ -91,7 +63,7 @@ func TestPreauthTokenizedCharge(t *testing.T) {
 // 			Expiryyear:"22",
 // 			Pin: "3310",
 // 		},
-		
+
 // 	}
 
 // 	for _, test := range tests {
@@ -112,7 +84,7 @@ func TestPreauthTokenizedCharge(t *testing.T) {
 // 			Amount:100,
 // 			Flwref:"FLW-MOCK-e80776317e0dc061dd7f04662f308e58",
 // 		},
-		
+
 // 	}
 
 // 	for _, test := range tests {

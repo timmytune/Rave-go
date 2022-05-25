@@ -5,12 +5,6 @@ import (
 	"testing"
 )
 
-var r = Rave{
-	false,
-	"FLWPUBK-xxxxxxxxxxxxxxxxxxxxx-X",
-	"FLWSECK-xxxxxxxxxxxxxxxxxxxxx-X",
-}
-
 var p = PaymentPlan{r}
 
 func TestPaymentPlan_Create(t *testing.T) {

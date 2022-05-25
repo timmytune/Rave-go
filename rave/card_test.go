@@ -5,31 +5,30 @@ import (
 )
 
 func TestChargeCard(t *testing.T) {
-	var tests = []CardChargeData {
+	var tests = []CardChargeData{
 		{
-			Amount:30,
-			Txref:"MC-11001993",
-			Email:"kwaku@gmail.com",
-			CustomerPhone:"08123456789",
-			Currency:"NGN",
-			Cardno:"5399838383838381",
-			Cvv:"470",
-			Expirymonth:"10",
-			Expiryyear:"22",
-			Pin: "3310",
+			Amount:        30,
+			Txref:         "MC-11001993",
+			Email:         "kwaku@gmail.com",
+			CustomerPhone: "08123456789",
+			Currency:      "NGN",
+			Cardno:        "5399838383838381",
+			Cvv:           "470",
+			Expirymonth:   "10",
+			Expiryyear:    "22",
+			Pin:           "3310",
 		},
-		
 	}
 
 	for _, test := range tests {
 		error, response := Card{
 			r,
 		}.ChargeCard(test)
-		if error != nil{
-			t.Fatalf("Card Charge failed with error %v",error)
+		if error != nil {
+			t.Fatalf("Card Charge failed with error %v", error)
 		}
-		if response["status"] != "success"{
-			t.Fatalf("Card Charge status: %v, Details: %v",response["status"], response)
+		if response["status"] != "success" {
+			t.Fatalf("Card Charge status: %v, Details: %v", response["status"], response)
 		}
 	}
 }
@@ -41,7 +40,7 @@ func TestChargeCard(t *testing.T) {
 // 			Reference: "FLW-MOCK-e80776317e0dc061dd7f04662f308e58",
 // 			// resp["data"].(map[string]interface{})["flwRef"].(string),
 // 		},
-		
+
 // 	}
 
 // 	for _, test := range tests {
@@ -58,50 +57,23 @@ func TestChargeCard(t *testing.T) {
 // }
 
 func TestVerifyCard(t *testing.T) {
-	var tests = []CardVerifyData {
+	var tests = []CardVerifyData{
 		{
-			Amount: 30,
-			Currency: "NGN",
+			Amount:    30,
+			Currency:  "NGN",
 			Reference: "MC-11001993",
 		},
-		
 	}
 
 	for _, test := range tests {
 		error, response := Card{
 			r,
 		}.VerifyCard(test)
-		if error != nil{
-			t.Fatalf("Verify Charge failed with error %v",error)
+		if error != nil {
+			t.Fatalf("Verify Charge failed with error %v", error)
 		}
-		if response["status"] != "success"{
-			t.Fatalf("Verify Charge status: %v, Details: %v",response["status"], response)
-		}
-	}
-}
-
-func TestTokenizedCharge(t *testing.T) {
-	var tests = []SaveCardChargeData {
-		{
-			Token:"flw-t1nf-2f00ba4c24b27cbb39e7907c6b72d413-m03k",
-			Currency:"NGN",
-			Country:"NG",
-			Amount:100,
-			Email:"kwaku@gmail.com",
-			Txref:"MC-0123456789",
-		},
-		
-	}
-
-	for _, test := range tests {
-		error, response := Card{
-			r,
-		}.TokenizedCharge(test)
-		if error != nil{
-			t.Fatalf("Tokenized Charge failed with error %v",error)
-		}
-		if response["status"] != "success"{
-			t.Fatalf("Tokenized Charge status: %v, Details: %v",response["status"], response)
+		if response["status"] != "success" {
+			t.Fatalf("Verify Charge status: %v, Details: %v", response["status"], response)
 		}
 	}
 }
@@ -120,7 +92,7 @@ func TestTokenizedCharge(t *testing.T) {
 // 			Expiryyear:"22",
 // 			Pin: "3310",
 // 		},
-		
+
 // 	}
 
 // 	for _, test := range tests {
@@ -141,7 +113,7 @@ func TestTokenizedCharge(t *testing.T) {
 // 			Amount:100,
 // 			Flwref:"FLW-MOCK-e80776317e0dc061dd7f04662f308e58",
 // 		},
-		
+
 // 	}
 
 // 	for _, test := range tests {

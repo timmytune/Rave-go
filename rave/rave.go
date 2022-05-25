@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	sandboxUrl string = "https://ravesandboxapi.flutterwave.com/"
-	liveUrl    string = "https://api.ravepay.co/"
+	sandboxUrl string = "https://api.flutterwave.com/"
+	liveUrl    string = "https://api.flutterwave.com/"
 )
 
 // Rave base type
@@ -23,37 +23,13 @@ type Rave struct {
 	SecretKey string
 }
 
-// BaseUrlGetter implements behaviour to get the base url (live or sandbox)
-type BaseUrlGetter interface {
-	GetBaseUrl() string
-}
+var rave Rave
 
-// EndpointGetter implements behaviour to get the endpoint needed for a particular action
-type EndpointGetter interface {
-	GetEndpoint(endpointName string) map[string]string
-}
-
-//PublickeyGetter implements behaviour to get the developers public key
-type PublickeyGetter interface {
-	GetPublicKey() string
-}
-
-//SecretkeyGetter implements behaviour to get the developers secret key
-type SecretkeyGetter interface {
-	GetSecretKey() string
-}
-
-// Encryptor implements behaviour to encrypt payment payload with user secret key
-type Encryptor interface {
-	Encrypt() string
-}
-
-type Helpers interface {
-	BaseUrlGetter
-	EndpointGetter
-	PublickeyGetter
-	SecretkeyGetter
-	Encryptor
+func InitFlutterwave(isLive bool, secretKey string, publicKey string) {
+	if secretKey == "" || publicKey == "" {
+		log.Fatal("You need to set the your publickey and secretKey")
+	}
+	rave = Rave{Live: isLive, PublicKey: publicKey, SecretKey: secretKey}
 }
 
 var Endpoints = map[string]map[string]string{
@@ -147,26 +123,22 @@ var Endpoints = map[string]map[string]string{
 	},
 
 	"Beneficiaries": {
-		"list": "v2/gpx/transfers/beneficiaries",
-		"fetch": "v2/gpx/transfers/beneficiaries",
+		"list":   "v2/gpx/transfers/beneficiaries",
+		"fetch":  "v2/gpx/transfers/beneficiaries",
 		"create": "v2/gpx/transfers/beneficiaries/create",
 		"delete": "v2/gpx/transfers/beneficiaries/delete",
 	},
 	"Billspayments": {
 		"flybuy": "v2/services/confluence",
-	
 	},
 	"flutterwaveOTP": {
 		"otp": "v2/services/confluence",
-	
 	},
-
-
-
-	
+	"transaction": {
+		"get.id":   "https://api.flutterwave.com/v3/transactions/:id/verify",
+		"get.many": "https://api.flutterwave.com/v3/transactions",
+	},
 }
-
-
 
 // gets the correct url for live and test mode
 func (r Rave) GetBaseURL() string {
@@ -183,27 +155,27 @@ func (Rave) GetEndpoint(raveType string, action string) string {
 
 // gets the public key from the environment variable if set or from the Rave object
 func (r Rave) GetPublicKey() string {
+	if r.PublicKey != "" {
+		return r.PublicKey
+	}
 	pubKey, ok := os.LookupEnv("RAVE_PUBKEY")
 	if !ok {
-		if r.PublicKey == "" {
-			log.Fatal("You need to set the your public key as an environment variable \"RAVE_PUBKEY\" or as a field in the Rave struct")
-		} else {
-			return r.PublicKey
-		}
+		log.Fatal("You need to set the your public key as an environment variable \"RAVE_PUBKEY\" or as a field in the Rave struct")
 	}
+	r.PublicKey = pubKey
 	return pubKey
 }
 
 // gets the secret key
 func (r Rave) GetSecretKey() string {
+	if r.SecretKey != "" {
+		return r.SecretKey
+	}
 	secKey, ok := os.LookupEnv("RAVE_SECKEY")
 	if !ok {
-		if r.SecretKey == "" {
-			log.Fatal("You need to set the your secret key as an environment variable \"RAVE_SECKEY\" or as a field in the Rave struct")
-		} else {
-			return r.SecretKey
-		}
+		log.Fatal("You need to set the your secret key as an environment variable \"RAVE_SECKEY\" or as a field in the Rave struct")
 	}
+	r.SecretKey = secKey
 	return secKey
 }
 

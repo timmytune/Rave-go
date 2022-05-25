@@ -39,7 +39,7 @@ type GhanaMobilemoney struct {
 }
 
 func (m GhanaMobilemoney) SetupCharge(data GhanaMobileChargeData) map[string]interface{} {
-	chargeJSON := MapToJSON(data)
+	chargeJSON, _ := MapToJSON(data)
 	encryptedChargeData := m.Encrypt(string(chargeJSON[:]))
 	queryParam := map[string]interface{}{
 		"PBFPubKey": m.GetPublicKey(),
